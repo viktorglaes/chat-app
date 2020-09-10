@@ -2,6 +2,7 @@
   <div id="app">
     <div class="header">
       <h1>Chat App</h1>
+      <p class="user">{{ username }}</p>
     </div>
 
     <ChatRoom />
@@ -16,10 +17,37 @@ export default {
   components: {
     ChatRoom,
   },
+
+  data() {
+    return {
+      username: "",
+    };
+  },
+
+  methods: {
+    prompt() {
+      this.$buefy.dialog.prompt({
+        message: `What's your name?`,
+        inputAttrs: {
+          placeholder: "e.g. Walter",
+          maxlength: 30,
+        },
+        trapFocus: true,
+        onConfirm: (value) => (this.username = value),
+      });
+    },
+  },
+
+  mounted() {
+    this.username = this.prompt();
+    if (!this.username) {
+      this.username = "Anon";
+    }
+  },
 };
 </script>
 
-<style>
+<style lang="scss">
 #app {
   display: flex;
   flex-direction: column;
@@ -32,5 +60,10 @@ export default {
 .header {
   font-size: 36px;
   text-align: center;
+
+  .user {
+    text-align: start;
+    font-size: 16px;
+  }
 }
 </style>

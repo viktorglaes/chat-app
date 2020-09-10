@@ -5,7 +5,11 @@
         {{ message }}
       </div>
     </div>
-    <form class="margin-top">
+    <form
+      class="margin-top"
+      onSubmit="return false;"
+      v-on:keyup.enter="sendMessage"
+    >
       <b-field label="Message..." :label-position="labelPosition" grouped>
         <b-input class="full-width" type="text" v-model="message"></b-input>
         <p class="control">
@@ -29,11 +33,6 @@ export default {
   data() {
     return {
       socket: {},
-      //   context: {},
-      //   position: {
-      //     x: 0,
-      //     y: 0,
-      //   },
       message: "",
       messages: [],
       labelPosition: "on-border",
@@ -43,26 +42,11 @@ export default {
     this.socket = io("http://localhost:3000");
   },
   mounted() {
-    // this.context = this.$refs.game.getContext("2d");
-    // this.socket.on("position", (data) => {
-    //   this.position = data;
-    //   this.context.clearRect(
-    //     0,
-    //     0,
-    //     this.$refs.game.width,
-    //     this.$refs.game.height
-    //   );
-    //   this.context.fillRect(this.position.x, this.position.y, 20, 20);
-    // });
-
     this.socket.on("message", (message) => {
       this.messages.push(message);
     });
   },
   methods: {
-    // move(direction) {
-    //   this.socket.emit("move", direction);
-    // },
     sendMessage() {
       if (!this.message) {
         this.toast();
@@ -78,7 +62,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .chat {
   flex: 1;
   display: flex;
@@ -90,19 +74,17 @@ export default {
 .messages {
   flex: 1;
   overflow: scroll;
-}
-
-.messages .message {
-  display: flex;
-  border-bottom: 1px solid #efefef;
-  padding: 10px;
-  margin: 5px;
-  border-radius: 20rem;
-  background-color: #57d5e7;
-}
-
-.messages .message:not(:last-child) {
-  margin-bottom: 5px;
+  .message {
+    display: flex;
+    border-bottom: 1px solid #efefef;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 20rem;
+    background-color: #57d5e7;
+  }
+  .message:not(:last-child) {
+    margin-bottom: 5px;
+  }
 }
 
 form {
