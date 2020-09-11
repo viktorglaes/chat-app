@@ -1,23 +1,16 @@
 <template>
   <div class="chat">
     <div class="messages">
-      <div class="message" v-for="message in messages" v-bind:key="message.id">
-        {{ message }}
+      <div v-for="message in messages" v-bind:key="message.id">
+        <div class="message">{{ message.message }}</div>
+        <div class="time">{{ message.timestamp }}</div>
       </div>
     </div>
-    <form
-      class="margin-top"
-      onSubmit="return false;"
-      v-on:keyup.enter="sendMessage"
-    >
+    <form class="margin-top" onsubmit="return false;" v-on:keyup.enter="sendMessage">
       <b-field label="Message..." :label-position="labelPosition" grouped>
-        <b-input class="full-width" type="text" v-model="message"></b-input>
+        <b-input class="full-width" type="text" v-model="message.message"></b-input>
         <p class="control">
-          <b-button
-            class="button is-primary send-button"
-            v-on:click="sendMessage"
-            >Send Message</b-button
-          >
+          <b-button class="button is-primary send-button" v-on:click="sendMessage">Send Message</b-button>
         </p>
       </b-field>
     </form>
@@ -29,36 +22,57 @@ import io from "socket.io-client";
 
 export default {
   name: "ChatRoom",
+  props: ["users", "username"],
   components: {},
   data() {
     return {
       socket: {},
-      message: "",
+      message: {
+        message: "",
+        timestamp: ""
+      },
       messages: [],
-      labelPosition: "on-border",
+      labelPosition: "on-border"
     };
   },
   created() {
     this.socket = io("http://localhost:3000");
   },
   mounted() {
-    this.socket.on("message", (message) => {
+    this.socket.on("message", message => {
       this.messages.push(message);
     });
   },
   methods: {
     sendMessage() {
-      if (!this.message) {
+      if (!this.message.message) {
         this.toast();
       } else {
+        this.message.timestamp = this.getTime();
         this.socket.emit("message", this.message);
-        this.message = "";
+        this.message = {
+          message: "",
+          timestamp: ""
+        };
       }
     },
     toast() {
       this.$buefy.toast.open("Please enter message");
     },
-  },
+    getTime() {
+      let today = new Date();
+      let time =
+        (today.getHours() < 10 ? "0" : "") +
+        today.getHours() +
+        ":" +
+        (today.getMinutes() < 10 ? "0" : "") +
+        today.getMinutes() +
+        ":" +
+        (today.getSeconds() < 10 ? "0" : "") +
+        today.getSeconds();
+      return time;
+    }
+  }
 };
 </script>
 
@@ -84,6 +98,10 @@ export default {
   }
   .message:not(:last-child) {
     margin-bottom: 5px;
+  }
+  .time {
+    font-size: 10px;
+    margin-left: 44rem;
   }
 }
 

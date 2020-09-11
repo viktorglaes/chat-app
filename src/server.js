@@ -4,14 +4,15 @@ const http = require("http").Server(app);
 const io = require("socket.io")(http);
 
 io.on("connection", (socket) => {
+  socket.on("userOn", (username) => {
+    console.log(username);
+    socket.username = username;
+    io.emit("userOn", socket.username);
+  });
+
   socket.on("message", (message) => {
     console.log(message);
     io.emit("message", message);
-  });
-  socket.on("user", (username) => {
-    console.log(user);
-    socket.username = username;
-    io.emit("userConnect", socket.username);
   });
 });
 

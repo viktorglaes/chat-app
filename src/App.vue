@@ -2,7 +2,7 @@
   <div id="app">
     <div class="header">
       <h1>Chat App</h1>
-      <p class="user">{{ username }}</p>
+      <p class="user">User: {{ username }}</p>
     </div>
 
     <ChatRoom />
@@ -15,12 +15,12 @@ import ChatRoom from "./components/ChatRoom.vue";
 export default {
   name: "App",
   components: {
-    ChatRoom,
+    ChatRoom
   },
 
   data() {
     return {
-      username: "",
+      username: ""
     };
   },
 
@@ -30,12 +30,12 @@ export default {
         message: `What's your name?`,
         inputAttrs: {
           placeholder: "e.g. Walter",
-          maxlength: 30,
+          maxlength: 30
         },
         trapFocus: true,
-        onConfirm: (value) => (this.username = value),
+        onConfirm: value => (this.username = value)
       });
-    },
+    }
   },
 
   mounted() {
@@ -43,7 +43,7 @@ export default {
     if (!this.username) {
       this.username = "Anon";
     }
-  },
+  }
 };
 </script>
 
@@ -64,6 +64,7 @@ export default {
   .user {
     text-align: start;
     font-size: 16px;
+    margin-bottom: 5px;
   }
 }
 </style>
