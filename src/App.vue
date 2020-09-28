@@ -17,7 +17,7 @@ import io from "socket.io-client";
 export default {
   name: "App",
   components: {
-    ChatRoom
+    ChatRoom,
   },
 
   data() {
@@ -25,7 +25,7 @@ export default {
       username: "",
       socket: {},
       messages: [],
-      users: []
+      users: [],
     };
   },
 
@@ -46,7 +46,7 @@ export default {
     //   });
     // },
     joinServer() {
-      this.socket.on("loggedIn", data => {
+      this.socket.on("loggedIn", (data) => {
         this.messages = data.messages;
         this.users = data.users;
         this.socket.emit("userOn", this.username);
@@ -56,22 +56,22 @@ export default {
     },
 
     listen() {
-      this.socket.on("userJoin", user => {
+      this.socket.on("userJoin", (user) => {
         this.users.push(user);
       });
 
-      this.socket.on("userOut", user => {
+      this.socket.on("userOut", (user) => {
         this.users.splice(this.users.indexOf(user), 1);
       });
 
-      this.socket.on("msg", message => {
+      this.socket.on("msg", (message) => {
         this.messages.push(message);
       });
     },
 
     sendMessage(message) {
       this.socket.emit("msg", message);
-    }
+    },
   },
 
   mounted() {
@@ -81,7 +81,7 @@ export default {
     }
 
     this.joinServer();
-  }
+  },
 };
 </script>
 
