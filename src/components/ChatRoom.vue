@@ -1,16 +1,29 @@
 <template>
   <div class="chat">
     <div class="messages">
-      <div v-for="message in messages" v-bind:key="message.id">
-        <div class="message">{{ message.message }}</div>
-        <div class="time">{{ message.timestamp }}</div>
+      <div
+        class="message"
+        v-for="message in messages"
+        v-bind:key="message.index"
+      >
+        <div class="username">{{ message.username }}</div>
+        <div class="message-text">{{ message.msg }}</div>
       </div>
     </div>
-    <form class="margin-top" onsubmit="return false;" v-on:keyup.enter="sendMessage">
+    <form
+      class="margin-top"
+      onsubmit="return false;"
+      v-on:keyup.enter="sendMessage"
+    >
       <b-field label="Message..." :label-position="labelPosition" grouped>
-        <b-input class="full-width" type="text" v-model="message.message"></b-input>
+        <b-input class="full-width" type="text" v-model="msg"></b-input>
         <p class="control">
-          <b-button class="button is-primary send-button" v-on:click="sendMessage">Send Message</b-button>
+          <b-button
+            class="button is-primary send-button"
+            v-bind:disabled="!msg"
+            v-on:click="sendMessage"
+            >Send Message</b-button
+          >
         </p>
       </b-field>
     </form>
@@ -18,61 +31,42 @@
 </template>
 
 <script>
-import io from "socket.io-client";
-
 export default {
   name: "ChatRoom",
-  props: ["users", "username"],
+  props: ["messages"],
   components: {},
   data() {
     return {
-      socket: {},
-      message: {
-        message: "",
-        timestamp: ""
-      },
-      messages: [],
+      msg: "",
       labelPosition: "on-border"
     };
   },
-  created() {
-    this.socket = io("http://localhost:3000");
-  },
-  mounted() {
-    this.socket.on("message", message => {
-      this.messages.push(message);
-    });
-  },
   methods: {
     sendMessage() {
-      if (!this.message.message) {
+      if (!this.msg) {
         this.toast();
-      } else {
-        this.message.timestamp = this.getTime();
-        this.socket.emit("message", this.message);
-        this.message = {
-          message: "",
-          timestamp: ""
-        };
+        return;
       }
-    },
-    toast() {
-      this.$buefy.toast.open("Please enter message");
-    },
-    getTime() {
-      let today = new Date();
-      let time =
-        (today.getHours() < 10 ? "0" : "") +
-        today.getHours() +
-        ":" +
-        (today.getMinutes() < 10 ? "0" : "") +
-        today.getMinutes() +
-        ":" +
-        (today.getSeconds() < 10 ? "0" : "") +
-        today.getSeconds();
-      return time;
+      this.$emit("sendMessage", this.msg);
+      this.msg = "";
     }
+  },
+  toast() {
+    this.$buefy.toast.open("Please enter message");
   }
+  // getTime() {
+  //   let today = new Date();
+  //   let time =
+  //     (today.getHours() < 10 ? "0" : "") +
+  //     today.getHours() +
+  //     ":" +
+  //     (today.getMinutes() < 10 ? "0" : "") +
+  //     today.getMinutes() +
+  //     ":" +
+  //     (today.getSeconds() < 10 ? "0" : "") +
+  //     today.getSeconds();
+  //   return time;
+  // }
 };
 </script>
 
@@ -83,50 +77,50 @@ export default {
   flex-direction: column;
   background-color: #f9f9f9;
   box-shadow: 1px 1px 6px 0px rgba(0, 0, 0, 0.15);
-}
 
-.messages {
-  flex: 1;
-  overflow: scroll;
-  .message {
+  .messages {
+    flex: 1;
+    overflow: scroll;
+    .message {
+      display: flex;
+      border-bottom: 1px solid #efefef;
+      margin-bottom: 10px;
+
+      &:last-of-type {
+        border-bottom: none;
+      }
+      // &:first-of-type {
+      //   margin-top: 10px;
+      // }
+
+      .username {
+        width: 100px;
+        margin-right: 15px;
+        border-right: solid white;
+        text-align: center;
+        padding: 10px;
+      }
+
+      .message-text {
+        flex: 1;
+        background-color: #57d5e7;
+        padding: 10px;
+        border-radius: 20rem;
+      }
+    }
+  }
+  form {
     display: flex;
-    border-bottom: 1px solid #efefef;
-    padding: 10px;
-    margin: 5px;
-    border-radius: 20rem;
-    background-color: #57d5e7;
+    .input {
+      flex: 1;
+      height: 35px;
+      font-size: 18px;
+      box-sizing: border-box;
+      height: 100%;
+    }
+    .full-width {
+      width: 38rem;
+    }
   }
-  .message:not(:last-child) {
-    margin-bottom: 5px;
-  }
-  .time {
-    font-size: 10px;
-    margin-left: 44rem;
-  }
-}
-
-form {
-  display: flex;
-}
-
-form input {
-  flex: 1;
-  height: 35px;
-  font-size: 18px;
-  box-sizing: border-box;
-}
-
-input {
-  flex: 1;
-  height: 35px;
-  font-size: 18px;
-  box-sizing: border-box;
-}
-.margin-top {
-  margin-top: 1rem;
-}
-
-.full-width {
-  width: 38rem;
 }
 </style>
