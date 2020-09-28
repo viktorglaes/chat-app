@@ -8,7 +8,7 @@ let users = [];
 let messages = [];
 let index = 0;
 
-app.use(express.static(__dirname + "dist"));
+app.use(express.static(__dirname + "../dist"));
 
 io.on("connection", (socket) => {
   socket.emit("loggedIn", {
