@@ -8,7 +8,10 @@ let users = [];
 let messages = [];
 let index = 0;
 
-app.use(express.static(__dirname + "../dist"));
+app.use(express.static(__dirname + "/dist/"));
+app.get(/.*/, (req, res) => {
+  res.sendFile(__dirname + "/dist/index.html");
+});
 
 io.on("connection", (socket) => {
   socket.emit("loggedIn", {
